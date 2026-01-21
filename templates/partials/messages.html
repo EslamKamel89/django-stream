@@ -1,0 +1,22 @@
+{% if messages %}
+<div>
+  <ul class="fixed bottom-6 right-6 space-y-3 z-50">
+    {% for message in messages %}
+    <li
+      class="p-4 rounded-xl text-white shadow-lg text-sm font-semibold {% if 'error' in message.tags %} bg-error {% endif %} {% if 'success' in message.tags %} bg-success {% endif %} {% if 'warning' in message.tags %} bg-warning {% endif %} {% if 'info' in message.tags %} bg-info {% endif %}"
+      x-data="{ show: true }"
+      x-show="show"
+      x-init="setTimeout(() => show = false, 2500)"
+      x-transition:enter="duration-300 ease-out"
+      x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+      x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+      x-transition:leave="duration-200 ease-in"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0 translate-y-2"
+    >
+      {{ message }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

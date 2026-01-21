@@ -1,0 +1,47 @@
+<!--prettier-ignore-->
+{% load static %}
+{% load django_htmx %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--prettier-ignore-->
+    {% include 'partials/design-system.html' %}
+    {% include 'partials/styles.html' %}
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.js"
+      integrity="sha384-ezjq8118wdwdRMj+nX4bevEi+cDLTbhLAeFF688VK8tPDGeLUe0WoY2MZtSla72F"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD"
+      crossorigin="anonymous"
+    />
+    <title>{% block title %} {% endblock %}</title>
+    <!--prettier-ignore-->
+    {% block css %} {% endblock %}
+    {% htmx_script %}
+  </head>
+  <body
+    class="{% block class %}{% endblock %}"
+    hx-headers='{"x-csrftoken": "{{ csrf_token }}"}'
+  >
+    {% include 'partials/navbar.html' %}
+
+    <content class="block w-full">
+      <div class="max-w-4xl mx-auto px-8 py-24">
+        <main>{% block layout %} {% endblock %}</main>
+      </div>
+    </content>
+
+    <!--prettier-ignore-->
+    {% include 'partials/messages.html' %}
+    {% block js %}
+    {% endblock %}
+    {% include "partials/js.html" %}
+  </body>
+</html>

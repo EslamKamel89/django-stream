@@ -1,0 +1,31 @@
+<!--prettier-ignore-->
+{% extends 'layouts/box.html' %}
+{% block content %}
+
+<h1 class="mb-2 text-error">Delete Account</h1>
+
+<p class="text-neutral-700 mb-6">
+  Are you sure you want to delete your account? This action is permanent and
+  cannot be undone.
+</p>
+
+<div class="bg-neutral p-4 rounded-xl border border-error mb-6">
+  <p class="text-error font-semibold">
+    ⚠️ All your data will be permanently removed.
+  </p>
+</div>
+
+<form method="POST" class="flex items-center gap-3">
+  {% csrf_token %}
+
+  <button
+    type="submit"
+    class="bg-error hover:bg-red-600 text-white font-bold px-6 py-3 rounded-xl transition active:scale-95"
+  >
+    Yes, delete my account
+  </button>
+
+  <a href="{{ request.META.HTTP_REFERER }}" class="button gray"> Cancel </a>
+</form>
+
+{% endblock %}

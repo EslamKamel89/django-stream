@@ -1,0 +1,85 @@
+<!-- a_users/templates/a_users/profile-settings.html -->
+<!--prettier-ignore-->
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+
+<h1 class="mb-8">Account Settings</h1>
+
+<table class="w-full text-sm">
+  <tbody class="divide-y divide-neutral-200">
+    <!-- Email -->
+    <tr>
+      <th
+        scope="row"
+        class="pt-5 pb-2 text-base font-bold text-neutral-900 align-top"
+      >
+        Email address
+      </th>
+      <td
+        colspan="2"
+        id="email-address"
+        class="pt-5 pb-2 text-neutral-700 w-full px-6"
+      >
+        <div class="flex items-center justify-between gap-4 w-full">
+          <span>
+            {% if user.email %}{{ user.email }}{% else %}No Email{% endif %}
+          </span>
+
+          <a
+            hx-get="{% url 'email-change' %}"
+            hx-target="#email-address"
+            hx-swap="innerHTML"
+            class="text-primary font-semibold hover:underline cursor-pointer"
+          >
+            Edit
+          </a>
+        </div>
+      </td>
+    </tr>
+
+    <!-- Verification -->
+    <tr>
+      <th scope="row" class="pb-5"></th>
+      <td class="px-6 py-5">
+        {% if user.emailaddress_set.first.verified %}
+        <span class="inline-flex items-center gap-2 text-success font-semibold">
+          Verified
+        </span>
+        {% else %}
+        <span class="inline-flex items-center gap-2 text-warning font-semibold">
+          Not verified
+        </span>
+        {% endif %}
+      </td>
+
+      <td class="px-6 py-5 text-right">
+        {% if not user.emailaddress_set.first.verified %}
+        <form action="{% url 'email-verify' %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="!bg-white !p-0 text-accent font-semibold hover:underline">
+        </form>
+          Verify
+        </button>
+        {% endif %}
+      </td>
+    </tr>
+
+    <!-- Delete -->
+    <tr>
+      <th scope="row" class="py-5 text-base font-bold text-neutral-900">
+        Delete Account
+      </th>
+
+      <td class="px-6 py-5 text-neutral-700">
+        Once deleted, your account is gone forever.
+      </td>
+
+      <td class="px-6 py-5 text-right">
+        <a href="{% url 'delete-account' %}" class="text-error font-semibold hover:underline"> Delete </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}
