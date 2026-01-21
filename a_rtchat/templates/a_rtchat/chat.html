@@ -19,7 +19,7 @@
     <div id="chat_container" class="overflow-y-auto grow bg-neutral-50">
       <ul id="chat_messages" class="flex flex-col gap-4 p-4">
         <!--prettier-ignore-->
-        {% for message in chat_messages %}
+        {% for message in chat_messages reversed %}
         {% if message.author == user %}
         <li class="flex justify-end">
           <div
@@ -31,7 +31,7 @@
         {% else %}
         <li>
           <div class="flex items-start gap-2">
-            <a href="">
+            <a href="{% url 'profile' message.author.username %}">
               <img
                 class="w-8 h-8 rounded-full object-cover border border-neutral"
                 src="{{ user.profile.avatar_url }}"
@@ -46,10 +46,11 @@
               </div>
 
               <div class="text-xs mt-1 ml-2">
-                <span class="text-neutral-800 font-semibold"
-                  >{{message.author.username}}</span
+                <a
+                  class="text-muted"
+                  href="{% url 'profile' message.author.username %}"
+                  >@{{message.author.username}}</a
                 >
-                <span class="text-muted">@{{message.author.username}}</span>
               </div>
             </div>
           </div>
