@@ -5,4 +5,87 @@
 
 {% block content %}
 
+<section class="max-w-6xl mx-auto px-6 py-24">
+  <!-- Hero -->
+  <div class="text-center max-w-3xl mx-auto">
+    <h1 class="text-5xl font-extrabold text-neutral-900 mb-6">
+      Real-time conversations,<br />
+      built for speed.
+    </h1>
+
+    <p class="text-lg text-muted mb-10">
+      Django Stream is a lightweight real-time chat application designed for
+      fast, secure, and seamless communication.
+    </p>
+
+    <div class="flex justify-center gap-4">
+      {% if request.user.is_authenticated %}
+      <a
+        href="{% url 'chat' %}"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:opacity-90 transition"
+      >
+        <i class="bi bi-chat-dots-fill"></i>
+        Open Chat
+      </a>
+      {% else %}
+      <a
+        href="{% url 'account_signup' %}"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-neutral-900 font-semibold hover:opacity-90 transition"
+      >
+        <i class="bi bi-person-plus"></i>
+        Get Started
+      </a>
+      <a
+        href="{% url 'account_login' %}"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-neutral text-neutral-900 font-semibold hover:opacity-90 transition"
+      >
+        <i class="bi bi-box-arrow-in-right"></i>
+        Login
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="grid md:grid-cols-3 gap-6 mt-24">
+    <div class="p-6 rounded-2xl bg-neutral border border-neutral-200">
+      <div class="text-primary text-3xl mb-4">
+        <i class="bi bi-lightning-charge-fill"></i>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Real-time</h2>
+      <p class="text-muted">
+        Messages appear instantly using WebSockets for a smooth chat experience.
+      </p>
+    </div>
+
+    <div class="p-6 rounded-2xl bg-neutral border border-neutral-200">
+      <div class="text-primary text-3xl mb-4">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Secure</h2>
+      <p class="text-muted">
+        Authentication-based access ensures your conversations stay private.
+      </p>
+    </div>
+
+    <div class="p-6 rounded-2xl bg-neutral border border-neutral-200">
+      <div class="text-primary text-3xl mb-4">
+        <i class="bi bi-code-slash"></i>
+      </div>
+      <h2 class="text-xl font-bold mb-2">Built with Django</h2>
+      <p class="text-muted">
+        Clean architecture powered by Django, HTMX, and Alpine.js.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="mt-24 text-center">
+    <p class="text-muted mb-4">Simple. Fast. Developer-friendly.</p>
+    <span class="text-sm text-neutral-500">
+      © {{ now|date:"Y" }} Django Stream
+    </span>
+  </div>
+</section>
+
 {% endblock %}
