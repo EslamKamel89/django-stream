@@ -3,14 +3,11 @@ from typing import TYPE_CHECKING
 from django.contrib.auth.models import User
 from django.db import models
 
-if TYPE_CHECKING:
-    from .models import GroupMessage
-
 
 class ChatGroup(models.Model):
     id: int
     group_name = models.CharField(max_length=128, unique=True)
-    chat_messages: list[GroupMessage]
+    chat_messages: list["GroupMessage"]
 
     def __str__(self) -> str:
         return self.group_name
