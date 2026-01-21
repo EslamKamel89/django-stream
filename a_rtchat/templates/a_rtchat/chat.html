@@ -2,7 +2,7 @@
 {% extends 'layouts/blank.html' %}
 
 {% block title %} Chat {% endblock %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 <wrapper class="block max-w-4xl mx-auto px-4">
   <div
@@ -61,22 +61,7 @@
 
     <!-- Input -->
     <div class="sticky bottom-0 bg-white border-t border-neutral-200 p-3">
-      <form
-        id="chat_message_form"
-        method="POST"
-        class="flex items-center gap-2"
-      >
-        <input
-          type="text"
-          name="message"
-          placeholder="Add message…"
-          maxlength="150"
-          class="flex-grow"
-        />
-        <button type="submit" class="!px-4 !bg-transparent">
-          <i class="bi bi-send-fill text-primary text-2xl"></i>
-        </button>
-      </form>
+      {% crispy form %}
     </div>
   </div>
 </wrapper>
