@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "a_home",
     "a_users",
+    "a_rtchat",
     "django_cleanup.apps.CleanupConfig",  # always put last
 ]
 

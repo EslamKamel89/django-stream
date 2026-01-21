@@ -1,0 +1,107 @@
+<!--prettier-ignore-->
+{% extends 'layouts/blank.html' %}
+
+{% block title %} Chat {% endblock %}
+
+{% block content %}
+<wrapper class="block max-w-4xl mx-auto px-4">
+  <div
+    id="chat_window"
+    class="h-[45rem] flex flex-col bg-white rounded-2xl border border-neutral shadow-lg overflow-hidden"
+  >
+    <!-- Header -->
+    <div
+      class="flex items-center justify-center gap-2 bg-neutral-100 text-primary font-semibold p-3 sticky top-0 z-10"
+    >
+      <i class="bi bi-people-fill"></i>
+      <span id="online-count">3</span> online
+    </div>
+
+    <!-- Messages -->
+    <div id="chat_container" class="overflow-y-auto grow bg-neutral-50">
+      <ul id="chat_messages" class="flex flex-col gap-4 p-4">
+        <!-- Own message -->
+        <li class="flex justify-end">
+          <div
+            class="bg-primary text-white p-4 rounded-2xl rounded-br-md max-w-[75%]"
+          >
+            Hi, how is everybody?
+          </div>
+        </li>
+
+        <!-- Message -->
+        <li>
+          <div class="flex items-start gap-2">
+            <a href="">
+              <img
+                class="w-8 h-8 rounded-full object-cover border border-neutral"
+                src="https://pbs.twimg.com/profile_images/508601156767997952/fFTdKUf2_400x400.jpeg"
+              />
+            </a>
+
+            <div>
+              <div
+                class="bg-white text-neutral-800 p-4 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
+              >
+                Not bad, thanks for asking! My day has been quite productive so
+                far. I've been diving into fixing some bugs in the codebase,
+                which can be a nightmare sometimes, but I got them at the end.
+              </div>
+
+              <div class="text-xs mt-1 ml-2">
+                <span class="text-neutral-800 font-semibold">Bart</span>
+                <span class="text-muted">@bart</span>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Message -->
+        <li>
+          <div class="flex items-start gap-2">
+            <a href="">
+              <img
+                class="w-8 h-8 rounded-full object-cover border border-neutral"
+                src="https://cdn.dribbble.com/userupload/12910688/file/original-d33b34f28a79a4b085edec17d83870ba.png"
+              />
+            </a>
+
+            <div>
+              <div
+                class="bg-white text-neutral-800 p-4 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
+              >
+                Wonderful!
+              </div>
+
+              <div class="text-xs mt-1 ml-2">
+                <span class="text-neutral-800 font-semibold">Lilly</span>
+                <span class="text-muted">@lilly</span>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Input -->
+    <div class="sticky bottom-0 bg-white border-t border-neutral-200 p-3">
+      <form
+        id="chat_message_form"
+        method="POST"
+        class="flex items-center gap-2"
+      >
+        <input
+          type="text"
+          name="message"
+          placeholder="Add message…"
+          maxlength="150"
+          class="flex-grow"
+        />
+        <button type="submit" class="!px-4 !bg-transparent">
+          <i class="bi bi-send-fill text-primary text-2xl"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+</wrapper>
+{% endblock %}

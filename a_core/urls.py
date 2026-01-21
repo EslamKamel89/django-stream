@@ -28,4 +28,5 @@ urlpatterns = [
     path("profile/", include("a_users.urls")),
     path("accounts/", include("allauth.urls")),
     path("@<username>", ProfileView.as_view(), name="profile"),
+    path("chat", include("a_rtchat.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

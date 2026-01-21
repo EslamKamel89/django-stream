@@ -1,94 +1,172 @@
 <header
-  class="flex items-center justify-between h-20 px-8 sticky top-0 z-40 bg-primary text-white shadow"
+  x-data="{ mobileOpen: false }"
+  class="sticky top-0 z-40 bg-neutral-50 border-b border-neutral-200"
 >
-  <div>
-    <a class="flex items-center gap-3" href="/">
-      <img class="h-6" src="/static/images/logo.svg" alt="Logo" />
-      <span class="text-lg font-bold tracking-wide">Project Title</span>
+  <div
+    class="max-w-7xl mx-auto h-20 px-4 sm:px-8 flex items-center justify-between"
+  >
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3">
+      <img class="h-10" src="/static/images/logo.png" alt="Logo" />
     </a>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden md:block">
+      <ul class="flex items-center gap-2">
+        {% if request.user.is_authenticated %}
+        <li>
+          <a
+            href="/"
+            class="flex items-center gap-2 text-neutral-700 p-2 rounded-lg hover:text-black hover:bg-gray-200"
+          >
+            <i class="bi bi-house-door"></i>
+            <span>Home</span>
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'chat' %}"
+            class="flex items-center gap-2 text-neutral-700 p-2 rounded-lg hover:text-black hover:bg-gray-200"
+          >
+            <i class="bi bi-chat-heart"></i>
+            <span>Chat</span>
+          </a>
+        </li>
+
+        <li x-data="{ dropdownOpen: false }" class="relative">
+          <a
+            @click="dropdownOpen = !dropdownOpen"
+            @click.away="dropdownOpen = false"
+            class=""
+          >
+            <div class="flex items-center gap-2 px-1 cursor-pointer">
+              <img
+                class="h-8 w-8 rounded-full object-cover border border-neutral"
+                src="{{ user.profile.avatar_url }}"
+              />
+              <span class="font-semibold text-neutral-800">
+                {{ user.profile.name }}
+              </span>
+              <i
+                class="bi bi-chevron-down transition-transform"
+                :class="dropdownOpen && 'rotate-180'"
+              ></i>
+            </div>
+          </a>
+
+          <div
+            x-show="dropdownOpen"
+            x-cloak
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl border border-neutral shadow-lg p-2"
+            x-transition
+          >
+            <ul class="hoverlist w-full">
+              <li>
+                <a
+                  href="{% url 'my-profile' %}"
+                  class="flex items-center gap-2"
+                >
+                  <i class="bi bi-person"></i> My Profile
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'my-profile-edit' %}"
+                  class="flex items-center gap-2"
+                >
+                  <i class="bi bi-pencil-square"></i> Edit Profile
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'profile-settings' %}"
+                  class="flex items-center gap-2"
+                >
+                  <i class="bi bi-gear"></i> Settings
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'account_logout' %}"
+                  class="flex items-center gap-2 text-error font-semibold"
+                >
+                  <i class="bi bi-box-arrow-right"></i> Log Out
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        {% else %}
+        <li>
+          <a
+            href="{% url 'account_login' %}"
+            class="flex items-center gap-2 text-neutral-700"
+          >
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}"
+            class="button bg-accent text-neutral-900 flex items-center gap-2"
+          >
+            <i class="bi bi-person-plus"></i> Signup
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+
+    <!-- Mobile Toggle -->
+    <button
+      @click="mobileOpen = !mobileOpen"
+      class="md:hidden !text-neutral-700 text-2xl !p-0 !bg-transparent"
+    >
+      <i class="bi bi-list"></i>
+    </button>
   </div>
 
-  <nav class="relative">
-    <ul class="navitems flex items-center gap-2 h-full">
+  <!-- Mobile Menu -->
+  <div
+    x-show="mobileOpen"
+    x-cloak
+    x-transition
+    class="md:hidden bg-white border-t border-neutral-200"
+  >
+    <ul class="flex flex-col p-4 gap-2">
       {% if request.user.is_authenticated %}
       <li>
-        <a href="/" class="text-white flex items-center gap-2">
-          <i class="bi bi-house-door"></i>
-          <span>Home</span>
+        <a href="/" class="flex items-center gap-2">
+          <i class="bi bi-house-door"></i> Home
         </a>
       </li>
-
-      <li x-data="{ dropdownOpen: false }" class="relative">
-        <a
-          @click="dropdownOpen = !dropdownOpen"
-          @click.away="dropdownOpen = false"
-          class="cursor-pointer select-none flex items-center gap-2 px-3"
-        >
-          <img
-            class="h-8 w-8 rounded-full object-cover border border-neutral"
-            src="{{ user.profile.avatar_url }}"
-          />
-          <span class="font-semibold">{{ user.profile.name }}</span>
-          <i
-            class="bi bi-chevron-down transition-transform duration-300"
-            :class="dropdownOpen && 'rotate-180'"
-          ></i>
+      <li>
+        <a href="{% url 'chat' %}" class="flex items-center gap-2">
+          <i class="bi bi-chat-heart"></i> Chat
         </a>
-
-        <div
-          x-show="dropdownOpen"
-          x-cloak
-          class="absolute right-0 mt-2 bg-white text-neutral-800 shadow-lg rounded-lg w-48 p-2 border border-neutral z-20"
-          x-transition:enter="duration-300 ease-out"
-          x-transition:enter-start="opacity-0 -translate-y-3 scale-95"
-          x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-        >
-          <ul class="hoverlist w-full">
-            <li>
-              <a href="{% url 'my-profile' %}" class="flex items-center gap-2">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="{% url 'my-profile-edit' %}"
-                class="flex items-center gap-2"
-              >
-                <i class="bi bi-pencil-square"></i>
-                <span>Edit Profile</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="{% url 'profile-settings' %}"
-                class="flex items-center gap-2"
-              >
-                <i class="bi bi-gear"></i>
-                <span>Settings</span>
-              </a>
-            </li>
-            <li>
-              <a
-                href="{% url 'account_logout' %}"
-                class="text-error font-semibold flex items-center gap-2"
-              >
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Log Out</span>
-              </a>
-            </li>
-          </ul>
-        </div>
       </li>
-
-      {% else %}
+      <li>
+        <a href="{% url 'my-profile' %}" class="flex items-center gap-2">
+          <i class="bi bi-person"></i> My Profile
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'profile-settings' %}" class="flex items-center gap-2">
+          <i class="bi bi-gear"></i> Settings
+        </a>
+      </li>
       <li>
         <a
-          href="{% url 'account_login' %}"
-          class="text-white flex items-center gap-2"
+          href="{% url 'account_logout' %}"
+          class="flex items-center gap-2 text-error font-semibold"
         >
-          <i class="bi bi-box-arrow-in-right"></i>
-          <span>Login</span>
+          <i class="bi bi-box-arrow-right"></i> Log Out
+        </a>
+      </li>
+      {% else %}
+      <li>
+        <a href="{% url 'account_login' %}" class="flex items-center gap-2">
+          <i class="bi bi-box-arrow-in-right"></i> Login
         </a>
       </li>
       <li>
@@ -96,11 +174,10 @@
           href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}"
           class="button bg-accent text-neutral-900 flex items-center gap-2"
         >
-          <i class="bi bi-person-plus"></i>
-          <span>Signup</span>
+          <i class="bi bi-person-plus"></i> Signup
         </a>
       </li>
       {% endif %}
     </ul>
-  </nav>
+  </div>
 </header>
