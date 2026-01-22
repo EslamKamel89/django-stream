@@ -1,35 +1,38 @@
-{% if message.author == user %}
-<li class="flex justify-end">
-  <div class="bg-primary text-white p-4 rounded-2xl rounded-br-md max-w-[75%]">
-    {{ message.body }}
-  </div>
-</li>
-{% else %}
-<li>
-  <div class="flex items-start gap-2">
-    <a href="{% url 'profile' message.author.username %}">
-      <img
-        class="w-8 h-8 rounded-full object-cover border border-neutral"
-        src="{{ user.profile.avatar_url }}"
-      />
-    </a>
-
-    <div>
+<div>
+  <template x-if="message.is_me">
+    <li class="flex justify-end">
       <div
-        class="bg-white text-neutral-800 p-4 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
-      >
-        {{ message.body }}
-      </div>
-
-      <div class="text-xs mt-1 ml-2">
-        <a
-          class="text-muted"
-          href="{% url 'profile' message.author.username %}"
-        >
-          @{{ message.author.username }}
+        class="bg-primary text-white p-4 rounded-2xl rounded-br-md max-w-[75%]"
+        x-text="message.body"
+      ></div>
+    </li>
+  </template>
+  <template x-if="!message.is_me">
+    <li>
+      <div class="flex items-start gap-2">
+        <a :href="`/@${message.author.username}`">
+          <img
+            class="w-8 h-8 rounded-full object-cover border border-neutral"
+            :src="message.author.avatar"
+          />
         </a>
+
+        <div>
+          <div
+            class="bg-white text-neutral-800 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
+            x-text="message.body"
+          ></div>
+
+          <div class="text-xs mt-1 ml-2">
+            <a
+              class="text-muted"
+              :href="`/@${message.author.username}`"
+              x-text="`@${message.author.username}`"
+            >
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</li>
-{% endif %}
+    </li>
+  </template>
+</div>

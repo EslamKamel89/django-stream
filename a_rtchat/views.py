@@ -1,6 +1,6 @@
+import json
 from http.client import HTTPException
 
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
@@ -23,17 +23,35 @@ class ChatView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest):
         chat_group = self.get_chat_group()
-        chat_messages = self.get_chat_messages(chat_group)
-        form = GroupMessageCreateForm()
+        messages = self.get_chat_messages(chat_group)
+        serialized_messages = [
+            {
+                "id": msg.id,
+                "body": msg.body,
+                "author": {
+                    "username": msg.author.username,
+                    "avatar": msg.author.profile.avatar_url,  # type: ignore
+                },
+                "is_me": msg.author == request.user,
+            }
+            for msg in reversed(messages)
+        ]
         return render(
             request,
             "a_rtchat/chat.html",
-            {"chat_group": chat_group, "chat_messages": chat_messages, "form": form},
+            {
+                "chat_group": chat_group,
+                "serialized_messages": serialized_messages,
+            },
         )
 
     def post(self, request: HttpRequest):
         chat_group = self.get_chat_group()
-        form = GroupMessageCreateForm(data=request.POST)
+        try:
+            data = json.loads(request.body)
+        except Exception as e:
+            return HttpResponseBadRequest("Invalid json")
+        form = GroupMessageCreateForm(data=data)
         if not form.is_valid():
             return JsonResponse(
                 {
@@ -49,13 +67,14 @@ class ChatView(LoginRequiredMixin, View):
         return JsonResponse(
             {
                 "ok": True,
-                message: {
+                "message": {
                     "id": message.id,
                     "body": message.body,
-                },
-                "author": {
-                    "username": message.author.username,
-                    "avatar": message.author.profile.avatar_url,  # type: ignore
+                    "author": {
+                        "username": message.author.username,
+                        "avatar": message.author.profile.avatar_url,  # type: ignore
+                    },
+                    "is_me": True,
                 },
             }
         )
