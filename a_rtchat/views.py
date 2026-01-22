@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
 from django.http import HttpRequest
@@ -37,6 +38,10 @@ class ChatView(LoginRequiredMixin, View):
             message_obj.group = chat_group
             message_obj.save()
             form = GroupMessageCreateForm()
+        else:
+            body_error = form.errors.get("body")
+            if body_error and body_error[0]:
+                messages.error(request, str(body_error[0]))
         chat_messages = self.get_chat_messages(chat_group)
         return render(
             request,
