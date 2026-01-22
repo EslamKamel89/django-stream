@@ -3,7 +3,11 @@
 
 {% block title %} Chat {% endblock %}
 {% block content %}
-<wrapper class="block max-w-4xl mx-auto px-4">
+<wrapper
+  class="block max-w-4xl mx-auto px-4"
+  x-data="chat()"
+  x-init="scrollToButton()"
+>
   <div
     id="chat_window"
     class="h-[45rem] flex flex-col bg-white rounded-2xl border border-neutral shadow-lg overflow-hidden"
@@ -27,4 +31,35 @@
     {% include 'a_rtchat/partials/chat_form.html' %}
   </div>
 </wrapper>
+{% endblock %} {% block js %}
+<script>
+  function chat() {
+    return {
+      messages: [],
+      body: "",
+      error: null,
+      sending: false,
+      async sendImage() {
+        this.error = null;
+        this.sending = true;
+        try {
+          const response = api.post("{% url 'chat' %}", { body: this.body });
+          if (response.data.ok) this.messages.push(response.data.message);
+          this.body = "";
+          this.$nextTick(() => this.scrollToBottom());
+        } catch (error) {
+          if (error?.response?.data?.errors?.body) {
+            this.error = error.response.data.errors.body[0];
+          }
+        } finally {
+          this.sending = false;
+        }
+      },
+      scrollToButton() {
+        const el = document.getElementById("chat_container");
+        el.scrollTop = el.scrollHeight;
+      },
+    };
+  }
+</script>
 {% endblock %}

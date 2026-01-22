@@ -3,7 +3,7 @@ from http.client import HTTPException
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 
@@ -32,28 +32,30 @@ class ChatView(LoginRequiredMixin, View):
         )
 
     def post(self, request: HttpRequest):
-        if not request.htmx:  # type: ignore
-            raise HTTPException("Invalid request")
         chat_group = self.get_chat_group()
         form = GroupMessageCreateForm(data=request.POST)
-        if form.is_valid():
-            message_obj: GroupMessage = form.save(commit=False)
-            message_obj.author = request.user  # type: ignore
-            message_obj.group = chat_group
-            message_obj.save()
-            form = GroupMessageCreateForm()
-            context = {
-                "message": message_obj,
-                "user": request.user,
+        if not form.is_valid():
+            return JsonResponse(
+                {
+                    "ok": False,
+                    "errors": form.errors,
+                },
+                status=400,
+            )
+        message: GroupMessage = form.save(commit=False)
+        message.author = request.user  # type: ignore
+        message.group = chat_group
+        message.save()
+        return JsonResponse(
+            {
+                "ok": True,
+                message: {
+                    "id": message.id,
+                    "body": message.body,
+                },
+                "author": {
+                    "username": message.author.username,
+                    "avatar": message.author.profile.avatar_url,  # type: ignore
+                },
             }
-            return render(request, "a_rtchat/partials/chat_bubble.html", context)
-        else:
-            body_error = form.errors.get("body")
-            if body_error and body_error[0]:
-                messages.error(request, str(body_error[0]))
-        chat_messages = self.get_chat_messages(chat_group)
-        return render(
-            request,
-            "a_rtchat/chat.html",
-            {"chat_group": chat_group, "chat_messages": chat_messages, "form": form},
         )
