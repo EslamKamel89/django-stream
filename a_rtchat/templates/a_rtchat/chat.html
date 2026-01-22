@@ -9,13 +9,13 @@
     class="flex flex-col bg-white rounded-2xl border border-neutral shadow-lg overflow-hidden"
   >
     <div
-      class="flex items-center justify-center gap-2 bg-neutral-100 text-primary font-semibold p-3 sticky top-0 z-10"
+      class="flex items-center justify-center gap-2 bg-neutral-100 text-primary font-semibold p-3 top-0 z-10 shrink-0"
     >
       <i class="bi bi-people-fill"></i>
       <span id="online-count">3</span> online
     </div>
 
-    <div id="chat_container" class="overflow-y-auto grow bg-neutral-50">
+    <div id="chat_container" class="overflow-y-auto flex-1 bg-neutral-50">
       <ul id="chat_messages" class="flex flex-col gap-2 p-4">
         <!--prettier-ignore-->
         {{ serialized_messages|json_script:'initial-messages' }}
@@ -24,8 +24,9 @@
         </template>
       </ul>
     </div>
-
-    {% include 'a_rtchat/partials/chat_form.html' %}
+    <div class="shrink-0 bg-white border-t border-neutral-200 p-4">
+      {% include 'a_rtchat/partials/chat_form.html' %}
+    </div>
   </div>
 </wrapper>
 {% endblock %} {% block js %}
