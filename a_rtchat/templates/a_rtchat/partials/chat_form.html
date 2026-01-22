@@ -1,0 +1,31 @@
+<div class="sticky bottom-0 bg-white border-t border-neutral-200 p-4">
+  <form
+    class="flex items-center gap-3"
+    hx-post="{% url 'chat' %}"
+    hx-target="#chat_messages"
+    hx-swap="beforeend"
+  >
+    {% csrf_token %}
+
+    <div class="flex-grow">
+      <input
+        name="body"
+        placeholder="Type your message…"
+        required
+        class="w-full resize-none rounded-xl bg-neutral-100 border border-neutral-300 px-4 py-2 text-neutral-800 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 {% if form.errors.body %} !border-red-500 {% endif %}"
+        value="{{ form.body.value|default_if_none:'' }}"
+      />
+
+      {% if form.errors.body %}
+      <p class="text-error text-sm mt-1">{{ form.errors.body.0 }}</p>
+      {% endif %}
+    </div>
+
+    <button
+      type="submit"
+      class="flex items-center justify-center h-12 w-12 rounded-xl bg-primary hover:bg-primary-800 transition active:scale-95"
+    >
+      <i class="bi bi-send-fill text-white text-xl"></i>
+    </button>
+  </form>
+</div>
