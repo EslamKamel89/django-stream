@@ -1,3 +1,5 @@
+from http.client import HTTPException
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
@@ -30,6 +32,8 @@ class ChatView(LoginRequiredMixin, View):
         )
 
     def post(self, request: HttpRequest):
+        if not request.htmx:  # type: ignore
+            raise HTTPException("Invalid request")
         chat_group = self.get_chat_group()
         form = GroupMessageCreateForm(data=request.POST)
         if form.is_valid():
@@ -38,6 +42,11 @@ class ChatView(LoginRequiredMixin, View):
             message_obj.group = chat_group
             message_obj.save()
             form = GroupMessageCreateForm()
+            context = {
+                "message": message_obj,
+                "user": request.user,
+            }
+            return render(request, "a_rtchat/partials/chat_bubble.html", context)
         else:
             body_error = form.errors.get("body")
             if body_error and body_error[0]:
