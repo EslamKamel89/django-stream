@@ -6,7 +6,7 @@
     : 'opacity-0 translate-y-2 scale-95'"
   class="transition duration-500 ease-out"
 >
-  <template x-if="message.is_me">
+  <template x-if="{{ user.id }} == message.author.id">
     <li class="flex justify-end">
       <div
         class="bg-primary text-white p-4 rounded-2xl rounded-br-md max-w-[75%]"
@@ -14,27 +14,27 @@
       ></div>
     </li>
   </template>
-  <template x-if="!message.is_me">
+  <template x-if="{{ user.id }} != message.author.id">
     <li class="">
       <div class="flex items-start gap-2">
-        <a :href="`/@${message.author.username}`">
+        <a :href="`/@${message.author?.username ?? ''}`">
           <img
             class="w-8 h-8 rounded-full object-cover border border-neutral"
-            :src="message.author.avatar"
+            :src="message.author?.avatar ?? ''"
           />
         </a>
 
         <div>
           <div
-            class="bg-white text-neutral-800 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
+            class="bg-white text-neutral-800 p-4 rounded-2xl rounded-bl-md max-w-[75%] border border-neutral-200"
             x-text="message.body"
           ></div>
 
           <div class="text-xs mt-1 ml-2">
             <a
               class="text-muted"
-              :href="`/@${message.author.username}`"
-              x-text="`@${message.author.username}`"
+              :href="`/@${message.author?.username ?? ''}`"
+              x-text="`@${message.author?.username ?? ''}`"
             >
             </a>
           </div>

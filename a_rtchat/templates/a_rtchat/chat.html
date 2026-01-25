@@ -33,13 +33,48 @@
 <script>
   function chat() {
     return {
+      socket: null,
       messages: [],
       body: "",
       error: null,
       sending: false,
       init() {
         this.initializeMessages();
+        this.connect();
         this.scrollToBottom();
+      },
+      connect() {
+        const protocol = window.location.protocol === "https" ? "wss" : "ws";
+        const url = `${protocol}://${window.location.host}/ws/chatroom/django`;
+        const socket = new WebSocket(url);
+        this.socket = socket;
+        socket.onopen = (event) => {
+          console.log("onopen", event);
+        };
+        socket.onclose = (event) => {
+          console.log("onclose", event);
+        };
+        socket.onerror = (error) => {
+          console.log("websocket error", error);
+        };
+        socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.ok) {
+            if (
+              this.messages.findIndex((m) => m.id === data.message.id) === -1
+            ) {
+              this.messages.push(data.message);
+              this.scrollToBottom();
+            }
+          } else {
+            this.error = data.errors.body[0];
+          }
+        };
+      },
+      sendMessage() {
+        // if (!this.body.trim()) return;
+        this.socket.send(JSON.stringify({ body: this.body }));
+        this.body = "";
       },
       initializeMessages() {
         const raw = document.getElementById("initial-messages");
@@ -47,7 +82,7 @@
           this.messages = JSON.parse(raw.textContent);
         }
       },
-      async sendMessage() {
+      async sendMessageHttp() {
         this.error = null;
         this.sending = true;
         try {
