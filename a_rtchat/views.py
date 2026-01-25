@@ -8,13 +8,14 @@ from django.shortcuts import get_object_or_404, render
 from django.views import View
 
 from a_rtchat.forms import GroupMessageCreateForm
+from a_rtchat.types import MessageResponse
 
 from .models import *
 
 
 class ChatView(LoginRequiredMixin, View):
     def get_chat_group(self) -> ChatGroup:
-        chat_group = get_object_or_404(ChatGroup, group_name="Django")
+        chat_group = get_object_or_404(ChatGroup, group_name="django")
         return chat_group
 
     def get_chat_messages(self, chat_group: ChatGroup) -> QuerySet[GroupMessage]:
@@ -24,15 +25,15 @@ class ChatView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest):
         chat_group = self.get_chat_group()
         messages = self.get_chat_messages(chat_group)
-        serialized_messages = [
+        serialized_messages: list[MessageResponse] = [
             {
                 "id": msg.id,
                 "body": msg.body,
                 "author": {
+                    "id": msg.author.id,
                     "username": msg.author.username,
                     "avatar": msg.author.profile.avatar_url,  # type: ignore
                 },
-                "is_me": msg.author == request.user,
             }
             for msg in reversed(messages)
         ]
@@ -64,17 +65,18 @@ class ChatView(LoginRequiredMixin, View):
         message.author = request.user  # type: ignore
         message.group = chat_group
         message.save()
+        message_response: MessageResponse = {
+            "id": message.id,
+            "body": message.body,
+            "author": {
+                "id": message.author.id,  # type: ignore
+                "username": message.author.username,  # type: ignore
+                "avatar": message.author.profile.avatar_url,  # type: ignore
+            },
+        }
         return JsonResponse(
             {
                 "ok": True,
-                "message": {
-                    "id": message.id,
-                    "body": message.body,
-                    "author": {
-                        "username": message.author.username,
-                        "avatar": message.author.profile.avatar_url,  # type: ignore
-                    },
-                    "is_me": True,
-                },
+                "message": message_response,
             }
         )
