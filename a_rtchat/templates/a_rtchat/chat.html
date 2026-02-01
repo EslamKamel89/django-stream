@@ -9,11 +9,32 @@
     class="flex flex-col bg-white rounded-2xl border border-neutral shadow-lg overflow-hidden"
   >
     <div
-      class="flex items-center justify-center gap-2 bg-neutral-100 text-primary font-semibold p-3 top-0 z-10 shrink-0"
+      class="flex items-center justify-between bg-neutral-100 border-b border-neutral-200 px-4 py-3 shrink-0"
     >
-      <i class="bi bi-circle-fill text-green-500" x-show="onlineCount "></i>
-      <i class="bi bi-circle-fill text-gray-500" x-show="!onlineCount"></i>
-      <span id="online-count" x-text="onlineCount"></span> online
+      <div
+        class="flex items-center gap-2 text-sm font-semibold text-neutral-800"
+      >
+        <span class="relative flex h-3 w-3">
+          <span
+            x-show="onlineCount"
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"
+          ></span>
+          <span
+            class="relative inline-flex rounded-full h-3 w-3"
+            :class="onlineCount ? 'bg-success' : 'bg-neutral-400'"
+          ></span>
+        </span>
+
+        <span class="text-primary" x-text="onlineCount"></span>
+        <span class="text-muted">online</span>
+      </div>
+
+      <div
+        class="text-sm font-semibold text-neutral-700 flex items-center gap-2"
+      >
+        <i class="bi bi-chat-square-text text-primary"></i>
+        <span x-text="chatGroupName"></span>
+      </div>
     </div>
 
     <div id="chat_container" class="overflow-y-auto flex-1 bg-neutral-50">
@@ -40,6 +61,7 @@
       error: null,
       sending: false,
       onlineCount: 0,
+      chatGroupName: "{{ chat_group.group_name }}",
       init() {
         this.initializeMessages();
         this.connect();
@@ -47,7 +69,7 @@
       },
       connect() {
         const protocol = window.location.protocol === "https" ? "wss" : "ws";
-        const url = `${protocol}://${window.location.host}/ws/chatroom/django`;
+        const url = `${protocol}://${window.location.host}/ws/chatroom/${this.chatGroupName}`;
         const socket = new WebSocket(url);
         this.socket = socket;
         socket.onopen = (event) => {
