@@ -36,6 +36,9 @@ class ChatView(LoginRequiredMixin, View):
                 request, "You are not allowed to join this private chat"
             )
             return redirect(reverse("home"))
+        other_user: User | None = None
+        if chat_group.is_private:
+            other_user = chat_group.members.exclude(id=getattr(user, "id")).first()
         messages = self.get_chat_messages(chat_group)
         serialized_messages: list[MessageResponse] = [
             {
@@ -55,6 +58,7 @@ class ChatView(LoginRequiredMixin, View):
             {
                 "chat_group": chat_group,
                 "serialized_messages": serialized_messages,
+                "other_user": other_user,
             },
         )
 
@@ -107,17 +111,8 @@ class GetOrCreateChatRoom(LoginRequiredMixin, View):
             ChatGroup.objects.filter(is_private=True)
             .filter(members=user)
             .filter(members=other_user)
-            .annotate(member_count=Count("members"))
-            .filter(member_count=2)
             .first()
         )
-        # my_chat_groups: QuerySet[ChatGroup] = request.user.chat_groups.filter(is_private=True)  # type: ignore
-
-        # if my_chat_groups.exists():
-        #     for chat_group in my_chat_groups:
-        #         if chat_group.members.filter(id=other_user.id).exists():  # type: ignore
-        #             private_chat_group = chat_group
-        #             break
         if not private_chat_group:
             private_chat_group = ChatGroup.objects.create(is_private=True)
             private_chat_group.members.add(user, other_user)
