@@ -28,13 +28,22 @@
         <span class="text-primary" x-text="onlineCount"></span>
         <span class="text-muted">online</span>
       </div>
-
+      {% if other_user %}
+      <a
+        href="{% url 'profile' other_user %}"
+        class="text-sm font-semibold text-primary flex items-center gap-2"
+      >
+        <i class="bi bi-chat-square-text text-primary"></i>
+        <span>@{{ other_user }}</span>
+      </a>
+      {% else %}
       <div
         class="text-sm font-semibold text-neutral-700 flex items-center gap-2"
       >
         <i class="bi bi-chat-square-text text-primary"></i>
-        <span x-text="chatGroupName"></span>
+        <span>Public chat</span>
       </div>
+      {% endif %}
     </div>
 
     <div id="chat_container" class="overflow-y-auto flex-1 bg-neutral-50">
