@@ -51,14 +51,12 @@ class ChatRoomConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
-
-        chat_group = getattr(self, "chat_group", None)
-        if not chat_group:
+        if not self.chat_group:
             print("[WS DISCONNECT] chat_group missing during disconnect")
             return super().disconnect(code)
 
-        if chat_group.users_online.filter(id=self.user.id).exists():  # type: ignore
-            chat_group.users_online.remove(self.user)
+        if self.chat_group.users_online.filter(id=self.user.id).exists():  # type: ignore
+            self.chat_group.users_online.remove(self.user)
             self.update_online_count()
 
         return super().disconnect(code)
@@ -71,8 +69,6 @@ class ChatRoomConsumer(WebsocketConsumer):
         if not text_data:
             print("[WS RECEIVE] Empty message received")
             return
-
-        chat_group = self.chat_group
 
         try:
             data = json.loads(text_data)
@@ -96,7 +92,7 @@ class ChatRoomConsumer(WebsocketConsumer):
 
         message: GroupMessage = form.save(commit=False)
         message.author = self.user
-        message.group = chat_group
+        message.group = self.chat_group
         message.save()
 
         message_response: MessageResponse = {
