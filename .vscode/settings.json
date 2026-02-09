@@ -25,13 +25,26 @@
         "**/__pycache__": true
     },
     "files.associations": {
-        "**/templates/**/*.html": "django-html"
+        // "**/templates/**/*.html": "django-html",
+        "**/templates/**/*.html": "html",
+        "*.js": "javascript"
     },
     "emmet.includeLanguages": {
-        "django-html": "html"
+        "django-html": "html",
+        "html": "html"
     },
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "files.trimTrailingWhitespace": true,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "javascript.validate.enable": true,
+    "js/ts.implicitProjectConfig.checkJs": true,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
+    },
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    }
 }
